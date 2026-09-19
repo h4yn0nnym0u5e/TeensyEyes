@@ -25,6 +25,36 @@
 // The index of the currently selected eye definitions
 static uint32_t defIndex{0};
 
+#if defined(USE_ST7789_CSFN)
+void ST7789_CSfn(int pin, bool negate)
+{
+  if (negate)
+    digitalWrite(ST7789_MUX_CS, HIGH);
+  else
+  {
+#if defined(ST7789_MUX_C)    
+    digitalWrite(ST7789_MUX_C, pin&4);
+#endif // defined(ST7789_MUX_C)    
+    digitalWrite(ST7789_MUX_B, pin&2);
+    digitalWrite(ST7789_MUX_A, pin&1);
+    digitalWrite(ST7789_MUX_CS, LOW);
+  }
+}
+
+
+void ST7789_CSpinmode(void)
+{
+#if defined(ST7789_MUX_C)    
+    pinMode(ST7789_MUX_C, OUTPUT);
+#endif // defined(ST7789_MUX_C)    
+    pinMode(ST7789_MUX_B, OUTPUT);
+    pinMode(ST7789_MUX_A, OUTPUT);
+    pinMode(ST7789_MUX_CS, OUTPUT);
+
+    ST7789_CSfn(0, HIGH);
+}
+#endif // defined(USE_ST7789_CSFN)
+
 #ifdef ORIG_CODE
 TwoWire WIRE = Wire2;
 #else
@@ -86,19 +116,19 @@ void setup() {
       delay(10);
   }
 
-#if defined(MUX_A)
-  pinMode(MUX_A,OUTPUT);
-  digitalWrite(MUX_A,HIGH);
-#endif // defined(MUX_A)
+#if defined(USE_ST7789_CSFN)
+  ST7789_CSpinmode(); // set up the /CS pins
+#endif // defined(USE_ST7789_CSFN)
 
-#if defined(MUX_B)
-  pinMode(MUX_B,OUTPUT);
-  digitalWrite(MUX_B,HIGH);
-#endif // defined(MUX_B)
 
 #if defined(BACKLIGHT_PIN)
   pinMode(BACKLIGHT_PIN,OUTPUT);
   digitalWrite(BACKLIGHT_PIN,HIGH);
+#endif // defined(BACKLIGHT_PIN)
+
+#if defined(NOT_BACKLIGHT_PIN)
+  pinMode(NOT_BACKLIGHT_PIN,OUTPUT);
+  digitalWrite(NOT_BACKLIGHT_PIN,HIGH);
 #endif // defined(BACKLIGHT_PIN)
 
 #ifndef ORIG_CODE

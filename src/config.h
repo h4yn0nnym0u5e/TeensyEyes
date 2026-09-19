@@ -84,8 +84,15 @@
 
 #ifdef USE_GC9A01A
 #include "displays/GC9A01A_Display.h"
+
 #elif defined USE_ST7789
 #include "displays/ST7789_Display.h"
+#ifdef ST7735_SPICLOCK
+#undef ST7735_SPICLOCK
+#endif
+
+#elif defined USE_ST7789_CSFN
+#include "displays/ST7789_csFn_Display.h"
 #ifdef ST7735_SPICLOCK
 #undef ST7735_SPICLOCK
 #endif
@@ -206,6 +213,7 @@ GC9A01A_Config eyeInfo[] = {
 #endif
   {  22,  9,   11,  13,  10,   2,      0,     1, true }		// Left eye
 };
+
 #elif defined (USE_ST7789)
 ST7789_Config eyeInfo[] = {
 /*  
@@ -224,6 +232,18 @@ ST7789_Config eyeInfo[] = {
   {  22,  9,   11,  13,  10,   0,      0,     1, true }		// Left eye
 #endif
 };
+
+#elif defined(USE_ST7789_CSFN)
+extern void ST7789_CSfn(int,bool);
+ST7789_csFn_Config eyeInfo[] = {
+  // /CS function                              DC RST   width/height  ROT  MIRROR USE_FB  ASYNC  PSRAM_FB
+  {[](bool negate){ ST7789_CSfn(1, negate); }, 10, 22,  240,240,       1,     0,     1,   false,  false},
+#if NUM_EYES > 1
+  {[](bool negate){ ST7789_CSfn(2, negate); }, 10, -1,  240,240,       1,     1,     1,   false,  false}
+#endif
+
+};
+
 #endif
 #endif	/* meissner changes.  */
 
@@ -250,7 +270,8 @@ constexpr uint32_t SPI_SPEED{90'000'000};
 constexpr int8_t BLINK_PIN{-1};
 
 #else	/* meissner changes.  */
-constexpr int8_t BLINK_PIN{3};
+//constexpr int8_t BLINK_PIN{3};
+constexpr int8_t BLINK_PIN{-1};
 #endif	/* meissner changes.  */
 
 constexpr int8_t JOYSTICK_X_PIN{-1};
@@ -271,6 +292,8 @@ constexpr bool USE_PERSON_SENSOR{DEFAULT_PERSON_SENSOR};
 EyeController<NUM_EYES, GC9A01A_Display> *eyes{};
 #elif defined USE_ST7789
 EyeController<NUM_EYES, ST7789_Display> *eyes{};
+#elif defined USE_ST7789_CSFN
+EyeController<NUM_EYES, ST7789_csFn_Display> *eyes{};
 #endif
 
 void initEyes(bool autoMove, bool autoBlink, bool autoPupils) {
@@ -310,5 +333,25 @@ void initEyes(bool autoMove, bool autoBlink, bool autoPupils) {
 #error "At present, only 1 or 2 eyes are supported."
 #endif
 
+#elif defined USE_ST7789_CSFN
+
+#if NUM_EYES == 2
+  auto l = new ST7789_csFn_Display(eyeInfo[0]);
+  auto r = new ST7789_csFn_Display(eyeInfo[1]);
+  const DisplayDefinition<ST7789_csFn_Display> left{l, defs[0]};
+  const DisplayDefinition<ST7789_csFn_Display> right{r, defs[1]};
+  eyes = new EyeController<2, ST7789_csFn_Display>({left, right}, autoMove, autoBlink, autoPupils);
+
+#elif NUM_EYES == 1
+  auto e = new ST7789_csFn_Display(eyeInfo[0]);
+  const DisplayDefinition<ST7789_csFn_Display> eye{e, defs[0]};
+  eyes = new EyeController<1, ST7789_csFn_Display>({eye}, autoMove, autoBlink, autoPupils);
+
+#else
+#error "At present, only 1 or 2 eyes are supported."
+#endif
+
+#else
+#error "No valid display type configured"
 #endif	/* USE_GC9A01A or USE_ST7789.  */
 }

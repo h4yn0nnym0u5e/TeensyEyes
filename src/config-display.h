@@ -1,10 +1,16 @@
 // Choose which display to use.
 
 //#define USE_GC9A01A
-#define USE_ST7789
+// #define USE_ST7789
+#define USE_ST7789_CSFN
 
-#define NUM_EYES			1
+#define NUM_EYES			2
+
 #define BACKLIGHT_PIN 4
+#define NOT_BACKLIGHT_PIN 3
+#define ST7789_MUX_CS 0
+#define ST7789_MUX_A  1
+#define ST7789_MUX_B  2
 
 // Enable hard code audio sounds in memory
 //#define USE_AUDIO_MEMORY		1
