@@ -7,6 +7,8 @@
 #include <Entropy.h>
 #include <SD.h>
 
+//#include <TeensyDebug.h>
+
 #include "config.h"
 #include "util/logging.h"
 #include "sensors/LightSensor.h"
@@ -74,6 +76,30 @@ void setup() {
   Serial.flush();
   Entropy.Initialize();
   randomSeed(Entropy.random());
+
+  //halt_cpu();
+
+  if (CrashReport)
+  {
+    Serial.print(CrashReport);
+    while (1)
+      delay(10);
+  }
+
+#if defined(MUX_A)
+  pinMode(MUX_A,OUTPUT);
+  digitalWrite(MUX_A,HIGH);
+#endif // defined(MUX_A)
+
+#if defined(MUX_B)
+  pinMode(MUX_B,OUTPUT);
+  digitalWrite(MUX_B,HIGH);
+#endif // defined(MUX_B)
+
+#if defined(BACKLIGHT_PIN)
+  pinMode(BACKLIGHT_PIN,OUTPUT);
+  digitalWrite(BACKLIGHT_PIN,HIGH);
+#endif // defined(BACKLIGHT_PIN)
 
 #ifndef ORIG_CODE
   Serial.printf("Eye duration = %d\n", (int)((EYE_DURATION_MS + 500) / 1000));

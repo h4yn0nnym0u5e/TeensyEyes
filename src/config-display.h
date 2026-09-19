@@ -1,9 +1,10 @@
 // Choose which display to use.
 
-#define USE_GC9A01A
-//#define USE_ST7789
+//#define USE_GC9A01A
+#define USE_ST7789
 
-#define NUM_EYES			2
+#define NUM_EYES			1
+#define BACKLIGHT_PIN 4
 
 // Enable hard code audio sounds in memory
 //#define USE_AUDIO_MEMORY		1
@@ -13,7 +14,7 @@
 //#define AUDIO_CS			BUILTIN_SDCARD
 
 // Enable person sensor
-#define DEFAULT_PERSON_SENSOR		true
+//#define DEFAULT_PERSON_SENSOR		true
 
 // Enable dfrobot gravity face/gesture sensor
 //#define DEFAULT_GRAVITY_SENSOR	true

@@ -31,6 +31,7 @@
 #else	/* meissner code.  */
 // Enable the eye(s) you want to #include -- these are large graphics tables for various eyes:
 #include "eyes/240x240/cat.h"
+/*
 #include "eyes/240x240/demon.h"
 #include "eyes/240x240/dragon.h"
 #include "eyes/240x240/hazel.h"
@@ -38,12 +39,13 @@
 #include "eyes/240x240/skull.h"
 #include "eyes/240x240/snake.h"
 #include "eyes/240x240/toonstripe.h"
+//*/
 
 // Note, Teensy 4.0 does not have enough space for all of the eyes, so only
 // build a subset of the eyes on Teensy 4.0.  Build all 18 of the eyes on the
 // Teensy 4.1.
 #if defined(ARDUINO_TEENSY41)
-#define ALL_EYES
+#define noALL_EYES
 #endif
 
 #if defined(ALL_EYES)
@@ -66,7 +68,7 @@
 
 #define NUM_EYE_PATTERNS 24
 #else
-#define NUM_EYE_PATTERNS 8
+#define NUM_EYE_PATTERNS 1
 #endif
 #endif	/* meissner code.  */
 
@@ -141,6 +143,7 @@ std::array<std::array<EyeDefinition, 2>, 13> eyeDefinitions{{
 // A list of all the different eye definitions we want to use
 std::array<std::array<EyeDefinition, NUM_EYES>, NUM_EYE_PATTERNS> eyeDefinitions{{
     EYE_PATTERN (cat::eye,           cat::eye),
+ /*   
     EYE_PATTERN (demon::left,        demon::right),
     EYE_PATTERN (dragon::eye,        dragon::eye),
     EYE_PATTERN (hazel::eye,         hazel::eye),
@@ -148,7 +151,7 @@ std::array<std::array<EyeDefinition, NUM_EYES>, NUM_EYE_PATTERNS> eyeDefinitions
     EYE_PATTERN (skull::eye,         skull::eye),
     EYE_PATTERN (snake::eye,         snake::eye),
     EYE_PATTERN (toonstripe::eye,    toonstripe::eye),
-
+//*/
 #if defined(ALL_EYES)
     EYE_PATTERN (green::left,        green::right),
     EYE_PATTERN (anime::left,        anime::right),
@@ -205,9 +208,18 @@ GC9A01A_Config eyeInfo[] = {
 };
 #elif defined (USE_ST7789)
 ST7789_Config eyeInfo[] = {
+/*  
   // Meissner defaults
   // CS  DC  MOSI  SCK  RST  ROT  MIRROR USE_FB  ASYNC
   {   0, 24,   26,  27,  25,   0,      0,     1, true },	// Right eye
+/*/  
+  // h4yn0nnym0u5e defaults
+  // Using mux, so need to set selector pins 1 and 2 to HIGH
+  // CS  DC  MOSI  SCK  RST  ROT  MIRROR USE_FB  ASYNC
+  {   0, 10,   11,  13,  22,   1,      0,     1, true },	// Right eye
+#define MUX_A 1
+#define MUX_B 2  
+//*/
 #if NUM_EYES > 1
   {  22,  9,   11,  13,  10,   0,      0,     1, true }		// Left eye
 #endif
