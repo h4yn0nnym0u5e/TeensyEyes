@@ -3,6 +3,13 @@
 ST7789_t3 *createDisplay(const ST7789_csFn_Config &config) 
 {
   config.csFn(HIGH); // negate /CS (set it high)
+
+  // This was necessary with an updated ST77xx driver: some elements
+  // were clearly only working properly if statically defined.
+  //ST7789_t3* mem = (ST7789_t3*) malloc(sizeof(ST7789_t3));
+  //memset((uint8_t*) mem, 0, sizeof(ST7789_t3));
+  //return new(mem) ST7789_t3(config.csFn, config.dc, config.rst);
+
   return new ST7789_t3(config.csFn, config.dc, config.rst);
 }
 
@@ -38,6 +45,7 @@ ST7789_csFn_Display::ST7789_csFn_Display(const ST7789_csFn_Config &config) :
           PSRAMframeBuffer = (uint16_t*) extmem_malloc(config.width * config.height * sizeof *PSRAMframeBuffer);
           if (nullptr == PSRAMframeBuffer) // EXTMEM falls back to heap (unfortunately...)
             break; 
+          display->setFrameBuffer(PSRAMframeBuffer); // got something, use it
       }
       ok = display->useFrameBuffer(true);
     } while (0);
@@ -45,7 +53,8 @@ ST7789_csFn_Display::ST7789_csFn_Display(const ST7789_csFn_Config &config) :
     if (!ok) {
       Serial.println(F("failed"));
     } else {
-      Serial.println(F("OK"));
+      Serial.print(F("OK"));
+      Serial.print(F("; framebuffer at 0x")); Serial.println((uint32_t) display->getFrameBuffer(), HEX);
     }
   }
   Serial.println(F("Success"));

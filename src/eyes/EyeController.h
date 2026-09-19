@@ -667,9 +667,9 @@ public:
   bool renderFrame() {
     auto &eye = currentEye();
 
-    if (!eye.display->isAvailable()) {
-      return false;
-    }
+    //if (!eye.display->isAvailable()) {
+    //  return false;
+    //}
 
     // Apply any automated eye/eyelid/pupil movements
     applyAutoMove(eye);
@@ -693,6 +693,9 @@ public:
     if (eyeIndex == 0) eye.x = eye.definition->polar.mapRadius * 2 - eye.x;
 
     // Send the updated eye to its screen
+    while (!eye.display->isAvailable()) 
+      ;
+
     eye.display->update();
 
     // Advance to the next eye for the next frame

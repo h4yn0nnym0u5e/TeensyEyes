@@ -237,9 +237,9 @@ ST7789_Config eyeInfo[] = {
 extern void ST7789_CSfn(int,bool);
 ST7789_csFn_Config eyeInfo[] = {
   // /CS function                              DC RST   width/height  ROT  MIRROR USE_FB  ASYNC  PSRAM_FB
-  {[](bool negate){ ST7789_CSfn(1, negate); }, 10, 22,  240,240,       1,     0,     1,   false,  false},
+  {[](bool negate){ ST7789_CSfn(1, negate); }, 10, 22,  240,240,       1,     0,     1,   true,  true},
 #if NUM_EYES > 1
-  {[](bool negate){ ST7789_CSfn(2, negate); }, 10, -1,  240,240,       1,     1,     1,   false,  false}
+  {[](bool negate){ ST7789_CSfn(2, negate); }, 10, -1,  240,240,       1,     1,     1,   true,  true}
 #endif
 
 };

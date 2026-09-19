@@ -22,6 +22,9 @@
 //#define USE_MP3
 //#define USE_AAC
 
+#ifdef USE_AUDIO_SDCARD
+#warning "Using audio-sdcard"
+
 #include <Audio.h>
 #include <Wire.h>
 #include <SPI.h>
@@ -30,8 +33,6 @@
 
 #include "config-display.h"
 
-#ifdef USE_AUDIO_SDCARD
-#warning "Using audio-sdcard"
 #include "audio-sd.h"
 
 #if USE_MP3
